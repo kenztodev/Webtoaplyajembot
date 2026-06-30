@@ -1,0 +1,41 @@
+name: Auto Setup & Deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  setup-and-run:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Create .env file from Secrets
+      run: |
+        echo "BOT_TOKEN=${{ secrets.BOT_TOKEN }}" >> .env
+        echo "ADMIN_IDS=${{ secrets.ADMIN_IDS }}" >> .env
+        echo "REQUIRED_CHANNEL=${{ secrets.REQUIRED_CHANNEL }}" >> .env
+        echo "WEB_URL=${{ secrets.WEB_URL }}" >> .env
+        echo "WEB_PORT=${{ secrets.WEB_PORT || 3000 }}" >> .env
+        echo "LOCAL_API_URL=${{ secrets.LOCAL_API_URL }}" >> .env
+        echo "API_ID=${{ secrets.API_ID }}" >> .env
+        echo "API_HASH=${{ secrets.API_HASH }}" >> .env
+        echo "ALLOWED_DOMAINS=${{ secrets.ALLOWED_DOMAINS || 'localhost,127.0.0.1' }}" >> .env
+        echo "SERVER_LICENSE_KEY=${{ secrets.SERVER_LICENSE_KEY || '98fb737f-2914-439d-a65e-82b15c91af86' }}" >> .env
+        echo "ANTI_CLONE_SECRET=${{ secrets.ANTI_CLONE_SECRET || '384c13f79375ea7ca721bae0396d4442a2dc5596071bf8997cf67ffed674f834' }}" >> .env
+        echo "PTERODACTYL=true" >> .env
+
+    - name: Use Node.js 20
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Start Application (Example for CI check)
+      run: |
+        node -c src/bot.js
+        echo "Aplikasi siap di-deploy ke Pterodactyl!"
