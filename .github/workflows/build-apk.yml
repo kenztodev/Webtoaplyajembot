@@ -29,11 +29,13 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: '17'
-        distribution: 'temurin'
-        cache: gradle
+        distribution: 'zulu' # Menggunakan Zulu sebagai alternatif yang sering lebih stabil di GitHub
+        cache: 'gradle'
 
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
+      with:
+        log-accepted-android-sdk-licenses: false
 
     - name: Prepare Project Files
       run: |
@@ -79,4 +81,3 @@ jobs:
         # Optional: Panggil webhook bot Anda jika ingin otomatis memproses antrian berikutnya lebih cepat
         # curl -X POST -H "Content-Type: application/json" -d '{"chatId":"${{ github.event.inputs.chat_id }}", "status":"${{ job.status }}"}' ${{ github.event.inputs.callback_url }}
         echo "Build finished with status: ${{ job.status }}"
-        
